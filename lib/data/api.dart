@@ -1,1 +1,1 @@
-String apiCall = 'localhost:8080/api/v1';
+const String apiCall = 'job-seeking-app-1-5auy.onrender.com';
