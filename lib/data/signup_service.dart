@@ -11,7 +11,7 @@ class SignUpService {
   }) async {
     try {
       final response = await http.post(
-        Uri.https(apiCall, '/user/SignUp'),
+        Uri.https(apiCall, 'user/SignUp'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'fullname': fullname,

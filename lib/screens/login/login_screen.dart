@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:taskfive/data/forgot_password_service.dart';
 import 'package:taskfive/data/login_service.dart';
+import 'package:taskfive/data/user.dart';
+import 'package:taskfive/screens/login/forgot_password_screen.dart';
 import 'package:taskfive/screens/login/sign_up_screen.dart';
 import 'package:taskfive/tabs.dart';
 
@@ -17,46 +18,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
-  Future<void> _forgotPassword() async {
-    final email = _emailController.text.trim();
-    if (email.isEmpty || !email.contains('@')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid email address')),
-      );
-      return;
-    }
 
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      await ForgotPasswordService.sendResetLink(email);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password reset link has been sent to your email'),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-
     setState(() {
       _isLoading = true;
     });
@@ -64,7 +31,6 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await LoginService.login(_emailController.text, _passwordController.text);
 
-      // Navigate to main app screen on successful login
       if (!mounted) return;
       Navigator.of(
         context,
@@ -112,10 +78,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return;
                     }
                     if (!value.contains('@')) {
-                      return 'Please enter a valid email';
+                      return;
                     }
                     return null;
                   },
@@ -141,7 +107,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: _isLoading ? null : _forgotPassword,
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (ctx) => const ForgotPasswordScreen(),
+                              ),
+                            );
+                          },
                     child: const Text('Forgot Password?'),
                   ),
                 ),

@@ -30,9 +30,9 @@ class Introscreen extends StatelessWidget {
                     icon: Icon(Icons.arrow_forward, size: 35),
                     onPressed: () {
                       print(DemoService.getData());
-                      // Navigator.of(context).pushReplacement(
-                      //   MaterialPageRoute(builder: (ctx) => LoginScreen()),
-                      // );
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (ctx) => LoginScreen()),
+                      );
                     },
                   ),
                 ],

@@ -15,7 +15,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
-  String _role = 'Jobseeker'; // Default role
+  String _role = 'Jobseeker';
 
   Future<void> _signUp() async {
     if (!_formKey.currentState!.validate()) {
@@ -34,7 +34,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         role: _role,
       );
 
-      // Navigate to login screen on successful signup
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Sign up successful! Please login.')),
@@ -71,7 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: Form(
         key: _formKey,
         child: Center(
-          child: SingleChildScrollView(
+          child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -130,7 +129,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: _role,
+                  initialValue: _role,
                   decoration: const InputDecoration(
                     label: Text('Role'),
                     border: OutlineInputBorder(),
@@ -141,8 +140,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: Text('Job Seeker'),
                     ),
                     DropdownMenuItem(
-                      value: 'Recruiter',
-                      child: Text('Recruiter'),
+                      value: 'Jobgiver',
+                      child: Text('Job giver'),
                     ),
                   ],
                   onChanged: (value) {

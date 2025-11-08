@@ -9,7 +9,7 @@ class LoginService {
   ) async {
     try {
       final response = await http.post(
-        Uri.https(apiCall, '/user/login'),
+        Uri.https(apiCall, 'user/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'email': email, 'password': password}),
       );
