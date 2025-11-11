@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taskfive/data/demo_service.dart';
+//import 'package:taskfive/data/demo_service.dart';
 import 'package:taskfive/screens/login/login_screen.dart';
 import 'package:taskfive/tabs.dart';
 
@@ -29,7 +29,7 @@ class Introscreen extends StatelessWidget {
                   IconButton.filled(
                     icon: Icon(Icons.arrow_forward, size: 35),
                     onPressed: () {
-                      print(DemoService.getData());
+                      //print(DemoService.getData());
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (ctx) => LoginScreen()),
                       );

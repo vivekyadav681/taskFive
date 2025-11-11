@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taskfive/data/signup_service.dart';
+import 'package:taskfive/data/auth_service.dart';
 import 'package:taskfive/screens/login/login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -27,7 +27,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
 
     try {
-      await SignUpService.signUp(
+      await AuthService.signup(
         fullname: _fullnameController.text,
         email: _emailController.text,
         password: _passwordController.text,
@@ -77,6 +77,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 Image.asset('assets/images/logo.png'),
                 const SizedBox(height: 24),
+                Text('Sign Up', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
                 TextFormField(
                   controller: _fullnameController,
                   decoration: const InputDecoration(

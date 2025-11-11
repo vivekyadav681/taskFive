@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taskfive/screens/about_us_screen.dart';
+import 'package:taskfive/screens/chats_screen.dart';
 import 'package:taskfive/screens/home_screen.dart';
+import 'package:taskfive/screens/jobs_screen.dart';
 import 'package:taskfive/screens/some_screen.dart';
+import 'package:taskfive/screens/profile_screen.dart';
 
 class Tabs extends StatefulWidget {
   const Tabs({super.key});
@@ -11,7 +15,13 @@ class Tabs extends StatefulWidget {
 
 class _TabsState extends State<Tabs> {
   int _selectedIndex = 0;
-  final List<Widget> _screens = [HomeScreen(), SomeScreen()];
+  final List<Widget> _screens = [
+    HomeScreen(),
+    JobsScreen(),
+    ProfileScreen(),
+    ChatsScreen(),
+    AboutUsScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +41,19 @@ class _TabsState extends State<Tabs> {
             label: 'home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.signal_cellular_alt),
-            label: 'some',
+            icon: Icon(Icons.badge_outlined),
+            label: 'jobs',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble_outline),
+            label: 'chats',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.miscellaneous_services_outlined),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:taskfive/data/login_service.dart';
-import 'package:taskfive/data/user.dart';
+import 'package:taskfive/data/auth_service.dart';
+//import 'package:taskfive/data/login_service.dart';
+//import 'package:taskfive/data/user.dart';
 import 'package:taskfive/screens/login/forgot_password_screen.dart';
 import 'package:taskfive/screens/login/sign_up_screen.dart';
 import 'package:taskfive/tabs.dart';
@@ -18,8 +19,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
-
-
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -29,7 +28,10 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await LoginService.login(_emailController.text, _passwordController.text);
+      await AuthService.login(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
 
       if (!mounted) return;
       Navigator.of(
@@ -58,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool _isObscure = true;
     return Scaffold(
       body: Form(
         key: _formKey,
@@ -69,6 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Image.asset('assets/images/logo.png'),
                 const SizedBox(height: 24),
+                Text('Login', style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 10),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
@@ -93,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     label: Text('Password'),
                     border: OutlineInputBorder(),
                   ),
-                  obscureText: true,
+                  obscureText: _isObscure,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
