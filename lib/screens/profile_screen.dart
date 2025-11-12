@@ -116,7 +116,7 @@ if(isEducation) {
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 4, 50, 132),
+                  backgroundColor: const Color.fromARGB(255, 149, 119, 218),
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),

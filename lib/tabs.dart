@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taskfive/screens/home_screen.dart';
 import 'package:taskfive/screens/some_screen.dart';
+import 'package:taskfive/screens/profile_screen.dart';
 
 class Tabs extends StatefulWidget {
   const Tabs({super.key});
@@ -11,7 +12,7 @@ class Tabs extends StatefulWidget {
 
 class _TabsState extends State<Tabs> {
   int _selectedIndex = 0;
-  final List<Widget> _screens = [HomeScreen(), SomeScreen()];
+  final List<Widget> _screens = [HomeScreen(), SomeScreen(), ProfileScreen()];
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +34,10 @@ class _TabsState extends State<Tabs> {
           BottomNavigationBarItem(
             icon: Icon(Icons.signal_cellular_alt),
             label: 'some',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
           ),
         ],
       ),
