@@ -63,16 +63,18 @@ class AuthService {
   }
 
   static Future<String> updatePassword({
-    required String oldPassword,
+    required String email,
     required String newPassword,
+    required String confirmPassword,
   }) async {
     final url = Uri.https(baseURL, updatePasswordURL);
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'oldpassword': oldPassword,
-        'newpassword': newPassword,
+        'email': email,
+        'oldpassword': newPassword,
+        'newpassword': confirmPassword,
       }),
     );
 
@@ -125,7 +127,6 @@ class AuthService {
     }
   }
 
-
   static Future<bool> isNewUser(String email) async {
     final exists = await checkUserExists(email);
     return !exists;
@@ -133,6 +134,12 @@ class AuthService {
 
   static Future<String> verifyOTP(String email, String otp) async {
     var url = Uri.https(baseURL, otpURL);
+    var response = await http.post(url, body: {"email": email, "otp": otp});
+    return jsonEncode(response.body);
+  }
+
+  static Future<String> verifyResetOtp(String email, String otp) async {
+    var url = Uri.https(baseURL, otpResetURL);
     var response = await http.post(url, body: {"email": email, "otp": otp});
     return jsonEncode(response.body);
   }

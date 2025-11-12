@@ -5,12 +5,10 @@ import 'package:taskfive/theme.dart';
 
 void main() {
   runApp(
-    ProviderScope(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: theme,
-        home: SplashScreen(),
-      ),
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: theme,
+      home: SplashScreen(),
     ),
   );
 }

@@ -6,6 +6,8 @@ const String signupURL = 'api/v1/user/SignUp';
 
 const String otpURL = 'api/v1/user/verifyOTP';
 
+const String otpResetURL = 'api/v1/user/verifyPasswordResetOTP';
+
 const String updatePasswordURL = 'api/v1/user/updatePassword';
 
 const String logoutURL = 'api/v1/user/logout';
