@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 //import 'package:taskfive/data/demo_service.dart';
 import 'package:taskfive/screens/login/login_screen.dart';
-import 'package:taskfive/tabs.dart';
 
 class Introscreen extends StatelessWidget {
   const Introscreen({super.key});

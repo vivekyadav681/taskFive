@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskfive/data/api.dart';
@@ -44,17 +43,56 @@ class AuthService {
       body: jsonEncode({'email': email, 'password': password}),
     );
 
-    final data = jsonDecode(response.body);
+    Map<String, dynamic> data = {};
+    try {
+      data = jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (_) {
+      data = {'message': response.reasonPhrase ?? 'Unknown response'};
+    }
+
     if (response.statusCode == 200) {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', data['token']);
+      if (data['token'] != null) {
+        await prefs.setString('token', data['token'].toString());
+      }
+      return {
+        'statusCode': 200,
+        'message': data['message'] ?? 'Login successful',
+        ...data,
+      };
+    } else if (response.statusCode == 400) {
+      return {
+        'statusCode': 400,
+        'message': data['message'] ?? data['error'] ?? 'Bad request',
+      };
+    } else if (response.statusCode == 401) {
+      return {
+        'statusCode': 401,
+        'message': data['message'] ?? 'Unauthorized: invalid credentials',
+      };
+    } else if (response.statusCode == 404) {
+      return {'statusCode': 404, 'message': data['message'] ?? 'Not found'};
+    } else {
+      return {
+        'statusCode': response.statusCode,
+        'message':
+            data['message'] ??
+            data['error'] ??
+            response.reasonPhrase ??
+            'Unexpected error',
+      };
     }
-    return data;
   }
 
-  static Future<void> logout() async {
+  static Future<String> logout(String email, String password) async {
+    var url = Uri.https(baseURL, logoutURL);
+    var response = await http.post(
+      url,
+      body: {'email': email, 'password': password},
+    );
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
+    return jsonDecode(response.body);
   }
 
   static Future<String?> getToken() async {
@@ -81,57 +119,6 @@ class AuthService {
     return response.body;
   }
 
-  /// Fetch user data using the stored token
-  static Future<Map<String, dynamic>> fetchUserData(String token) async {
-    final url = Uri.https(baseURL, userProfileURL);
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data;
-    } else {
-      throw Exception('Failed to fetch user data: ${response.statusCode}');
-    }
-  }
-
-  /// Check if a user exists by email
-  /// Returns true if user exists, false if user is new (needs signup)
-  /// Throws exception on network/server errors
-  static Future<bool> checkUserExists(String email) async {
-    try {
-      final url = Uri.https(baseURL, checkUserURL);
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email}),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        // Assumes API returns { 'exists': true/false } or similar
-        return data['exists'] == true || data['user'] != null;
-      } else if (response.statusCode == 404) {
-        // User not found
-        return false;
-      } else {
-        throw Exception('Error checking user: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Failed to check user existence: $e');
-    }
-  }
-
-  static Future<bool> isNewUser(String email) async {
-    final exists = await checkUserExists(email);
-    return !exists;
-  }
-
   static Future<String> verifyOTP(String email, String otp) async {
     var url = Uri.https(baseURL, otpURL);
     var response = await http.post(url, body: {"email": email, "otp": otp});
@@ -142,5 +129,11 @@ class AuthService {
     var url = Uri.https(baseURL, otpResetURL);
     var response = await http.post(url, body: {"email": email, "otp": otp});
     return jsonEncode(response.body);
+  }
+
+  static Future<String> forgotPassword(String email) async {
+    var url = Uri.https(baseURL, forgotPasswordURL);
+    var response = await http.post(url, body: {'email': email});
+    return jsonDecode(response.body);
   }
 }

@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:taskfive/screens/introScreen.dart';
-import 'package:taskfive/tabs.dart';
+// import 'package:taskfive/screens/introScreen.dart';
+// import 'package:taskfive/tabs.dart';
 import 'package:taskfive/screens/login/sign_up_screen.dart';
 
 class SplashScreen extends StatefulWidget {

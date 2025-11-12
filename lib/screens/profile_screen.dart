@@ -1,227 +1,169 @@
 import 'package:flutter/material.dart';
-import 'package:taskfive/models/user.dart';
-import 'package:taskfive/screens/login/login_screen.dart';
-import 'package:taskfive/data/auth_service.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
-
+  const ProfileScreen({Key? key}) : super(key: key);
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  User? _user;
-  bool _isLoading = true;
-  String? _error;
+  final TextEditingController experienceController = TextEditingController();
+  final TextEditingController educationController = TextEditingController();
+  final TextEditingController skillController = TextEditingController();
+  final TextEditingController resumeController = TextEditingController();
+  File? educationFile;
+  File? resumeFile;
+  String? selectedlanguage;
+  List<String> languages = ['English', 'Hindi'];
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUser();
-  }
+  Future<void> pickFile(bool isEducation) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg'],
+    );
 
-  Future<void> _loadUser() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-    try {
-      final token = await AuthService.getToken();
-      if (token == null) {
-        setState(() {
-          _user = null;
-          _isLoading = false;
-        });
-        return;
-      }
-      final map = await AuthService.fetchUserData(token);
+    if (result != null && result.files.single.path != null) {
       setState(() {
-        _user = User.fromMap(map);
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
+        final file = File(result.files.single.path!);
+        if (isEducation) {
+          educationFile = file;
+        } else {
+          resumeFile = file;
+        }
       });
     }
   }
 
-  Future<void> _logout() async {
-    await AuthService.logout();
-    if (!mounted) return;
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (ctx) => const LoginScreen()));
+  Widget _buildTextField(String label, TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return const Center(child: CircularProgressIndicator());
-    if (_error != null) return Center(child: Text('Error: $_error'));
-
-    final user = _user;
-    if (user == null) {
-      return Center(
+    return SafeArea(
+      child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(16),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Not signed in', style: TextStyle(fontSize: 18)),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (ctx) => const LoginScreen()),
-                  );
+              _buildTextField("Add Experience", experienceController),
+              const SizedBox(height: 16),
+
+              // Education section
+              _buildTextField("Add Education Details", educationController),
+              const SizedBox(height: 8),
+              if (educationFile != null)
+                Image.file(
+                  educationFile!,
+                  height: 120,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ElevatedButton.icon(
+                onPressed: () => pickFile(true),
+                icon: const Icon(Icons.attach_file),
+                label: const Text("Upload Education Image(JPEG)"),
+              ),
+              const SizedBox(height: 16),
+
+              // Skills section
+              _buildTextField("Add Skills", skillController),
+              const SizedBox(height: 16),
+
+              // Language dropdown
+              DropdownButtonFormField<String>(
+                value: selectedlanguage,
+                decoration: InputDecoration(
+                  labelText: "Choose Language",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                items: languages.map((lang) {
+                  return DropdownMenuItem(value: lang, child: Text(lang));
+                }).toList(),
+                onChanged: (value) {
+                  setState(() => selectedlanguage = value);
                 },
-                child: const Text('Sign in'),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Resume
+              _buildTextField("Add Resume Text", resumeController),
+              const SizedBox(height: 8),
+              if (resumeFile != null)
+                Image.file(
+                  resumeFile!,
+                  height: 120,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ElevatedButton.icon(
+                onPressed: () => pickFile(false),
+                icon: const Icon(Icons.upload_file),
+                label: const Text("Upload Resume/CV (JPEG)"),
+              ),
+              const SizedBox(height: 24),
+
+              // Save button
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 149, 119, 218),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 50,
+                      vertical: 15,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        title: Row(
+                          children: const [
+                            Icon(Icons.check_circle, color: Colors.green),
+                            SizedBox(width: 8),
+                            Text("Success"),
+                          ],
+                        ),
+                        content: const Text("Profile Saved Successfully!"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text(
+                              "OK",
+                              style: TextStyle(color: Colors.blueAccent),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+
+                  child: const Text(
+                    "Save Profile",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
               ),
             ],
           ),
-        ),
-      );
-    }
-
-    final fullname = user.fullname.isNotEmpty ? user.fullname : 'Unnamed';
-    final email = user.email;
-    final role = user.role ?? '';
-    final location = user.location ?? '';
-    final resume = user.resume;
-
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 44,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    child: Text(
-                      fullname.isNotEmpty ? fullname[0].toUpperCase() : '?',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(fullname, style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 6),
-                  Text(
-                    role,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
-                  ),
-                  const SizedBox(height: 6),
-                  if (location.isNotEmpty)
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.location_on_outlined,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          location,
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Contact',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.email_outlined, size: 18),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(email.isNotEmpty ? email : 'No email'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            if (resume != null) ...[
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Resume',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(height: 8),
-                      if (resume.summary != null) Text(resume.summary!),
-                      const SizedBox(height: 8),
-                      if (resume.experience.isNotEmpty)
-                        ...resume.experience.map((exp) {
-                          return ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text('${exp.role} @ ${exp.company}'),
-                            subtitle: Text(
-                              '${exp.from ?? ''} — ${exp.to ?? ''}',
-                            ),
-                          );
-                        }),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-            ],
-
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      // TODO: implement edit profile
-                    },
-                    child: const Text('Edit Profile'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _logout,
-                    child: const Text('Logout'),
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
       ),
     );

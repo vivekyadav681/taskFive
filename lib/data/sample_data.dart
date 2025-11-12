@@ -1,7 +1,6 @@
 import 'package:taskfive/models/company.dart';
 import 'package:taskfive/models/job.dart';
 
-// Sample companies used for UI and development
 final List<Company> sampleCompanies = [
   Company(
     title: 'Example Co',

@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:taskfive/data/auth_service.dart';
 import 'package:taskfive/screens/login/login_screen.dart';
 
-/// Screen displayed after a successful password-reset OTP verification.
-///
-/// The user enters a new password and confirms it. On successful update,
-/// we navigate back to the login screen.
+
 class UpdatePasswordScreen extends StatefulWidget {
   const UpdatePasswordScreen(this.email, {super.key});
 
-  /// The email for which the password is being reset.
+
   final String email;
 
   @override
@@ -32,15 +29,17 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
 
   String? _validateNewPassword(String? value) {
     if (value == null || value.trim().isEmpty) return 'Enter new password';
-    if (value.trim().length < 6)
+    if (value.trim().length < 6) {
       return 'Password must be at least 6 characters';
+    }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.trim().isEmpty) return 'Confirm your password';
-    if (value.trim() != _newPasswordController.text.trim())
+    if (value.trim() != _newPasswordController.text.trim()) {
       return 'Passwords do not match';
+    }
     return null;
   }
 
@@ -69,9 +68,6 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
     final confirm = _confirmPasswordController.text.trim();
 
     try {
-      // The backend expects: email, oldpassword, newpassword (some servers use
-      // a dedicated reset endpoint). Here updatePassword is reused; ensure the
-      // server accepts the payload we send.
       await AuthService.updatePassword(
         email: widget.email,
         newPassword: newPassword,
@@ -96,7 +92,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Mask email for privacy: show only first and domain
+    
     final displayedEmail = _maskEmail(widget.email);
 
     return Scaffold(

@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+
 import 'package:taskfive/models/job.dart';
 
 class Company {

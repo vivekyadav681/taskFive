@@ -9,13 +9,11 @@ class JobPost extends ConsumerWidget {
   JobPost(this.job, {super.key});
   final Job job;
   final List<String> comments = [];
-  // Note: liked state should ideally be managed by a provider or stateful widget.
   final bool _liked = false;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -25,7 +23,6 @@ class JobPost extends ConsumerWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Company avatar / placeholder
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: Theme.of(
@@ -75,12 +72,12 @@ class JobPost extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // Salary or posted time
+
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '\$${job.salary}',
+                      '${job.salary}',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -111,9 +108,7 @@ class JobPost extends ConsumerWidget {
                   ],
                 ),
                 TextButton(
-                  onPressed: () {
-                    // Placeholder for apply action
-                  },
+                  onPressed: () {},
                   style: TextButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Colors.white,

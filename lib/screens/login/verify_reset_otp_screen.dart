@@ -29,7 +29,6 @@ class _VerifyResetOtpScreenState extends State<VerifyResetOtpScreen> {
         widget.email,
         _otpController.text.trim(),
       );
-      // You may want to parse response; here we treat any response as success
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
@@ -83,8 +82,9 @@ class _VerifyResetOtpScreenState extends State<VerifyResetOtpScreen> {
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty)
+                    if (value == null || value.isEmpty) {
                       return 'Please enter the OTP';
+                    }
                     if (value.trim().length != 6) return 'OTP must be 6 digits';
                     return null;
                   },

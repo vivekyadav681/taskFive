@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:taskfive/models/job.dart';
-import 'package:taskfive/widgets/job_post.dart';
+import 'package:taskfive/widgets/job_list_view.dart';
 import 'package:taskfive/data/sample_data.dart';
-// Cleaned up: removed Riverpod/provider code and duplicate class declarations
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,10 +11,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Job>? _jobs; // TODO: Load jobs from sampleJobs or another source
+  List<Job>? _jobs;
   List<Job> _filteredJobs = [];
   final TextEditingController _searchController = TextEditingController();
-  int _selectedChipIndex = 0; // 0: All
+  int _selectedChipIndex = 0;
   final List<String> _chipLabels = [
     'All',
     'Remote',
@@ -31,13 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
     _jobs = List<Job>.from(sampleJobs);
     _filteredJobs = List<Job>.from(sampleJobs);
     _searchController.addListener(() {
-      // apply filters while typing
       _applyFilters();
     });
   }
-  // TODO: Load jobs directly here, e.g. from sampleJobs
-  // _jobs = List<Job>.from(sampleJobs);
-  // _filteredJobs = List<Job>.from(sampleJobs);
 
   @override
   void dispose() {
@@ -57,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: TextField(
               controller: _searchController,
               textInputAction: TextInputAction.search,
-              onSubmitted: (_) => _performSearch(),
+              onSubmitted: (_) => _applyFilters(),
               decoration: InputDecoration(
                 hintText: 'Search jobs, companies, keywords',
                 filled: true,
@@ -85,14 +79,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     IconButton(
                       icon: const Icon(Icons.search),
-                      onPressed: _performSearch,
+                      onPressed: _applyFilters,
                     ),
                   ],
                 ),
               ),
             ),
           ),
-          // Category chips (filter)
+    
           SizedBox(
             height: 56,
             child: ListView.separated(
@@ -116,32 +110,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          // Jobs list
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12.0,
-                vertical: 8.0,
-              ),
-              itemCount: _filteredJobs.length,
-              itemBuilder: (ctx, index) => Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: JobPost(_filteredJobs[index]),
-              ),
-            ),
-          ),
+          
+          Expanded(child: JobListView(jobs: _filteredJobs)),
         ],
       ),
     );
-  }
-
-  void _performSearch() {
-    final query = _searchController.text.trim().toLowerCase();
-    if (query.isEmpty) {
-      _applyFilters();
-      return;
-    }
-    _applyFilters();
   }
 
   void _applyFilters() {
@@ -160,27 +133,27 @@ class _HomeScreenState extends State<HomeScreen> {
           tags.contains(query);
     }).toList();
 
-    // apply chip filter
+    
     switch (_selectedChipIndex) {
-      case 1: // Remote
+      case 1: 
         results = results
             .where((j) => j.location.toLowerCase().contains('remote'))
             .toList();
         break;
-      case 2: // Full-time
+      case 2: 
         results = results.where((j) => j.jobtype == JobType.fullTime).toList();
         break;
-      case 3: // Part-time
+      case 3: 
         results = results.where((j) => j.jobtype == JobType.partTime).toList();
         break;
-      case 4: // Finance
+      case 4: 
         results = results
             .where((j) => j.category == JobCategory.financialServices)
             .toList();
         break;
       case 0:
       default:
-        // no extra filtering
+        
         break;
     }
 

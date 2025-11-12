@@ -10,6 +10,8 @@ const String otpResetURL = 'api/v1/user/verifyPasswordResetOTP';
 
 const String updatePasswordURL = 'api/v1/user/updatePassword';
 
+const String forgotPasswordURL = 'api/v1/user/forgotpassword';
+
 const String logoutURL = 'api/v1/user/logout';
 
 const String userProfileURL = 'api/v1/user/profile';

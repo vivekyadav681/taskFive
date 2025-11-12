@@ -42,7 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Sign up successful! Please login.')),
       );
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (ctx) => OTPverifyScreen(_emailController.text.trim()),
         ),
@@ -97,7 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       label: Text('Full Name'),
                       border: OutlineInputBorder(),
                     ),
-                    textCapitalization: TextCapitalization.words,
+
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your full name';
@@ -223,7 +223,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onPressed: _isLoading
                         ? null
                         : () {
-                            Navigator.of(context).pop();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (ctx) => LoginScreen(),
+                              ),
+                            );
                           },
                     child: const Text('Already have an account? Login'),
                   ),
