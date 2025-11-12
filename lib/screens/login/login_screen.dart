@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _isPasswordObscure = true;
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) {
@@ -60,15 +61,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool _isObscure = true;
     return Scaffold(
       body: Form(
         key: _formKey,
-        child: Center(
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Image.asset('assets/images/logo.png'),
                 const SizedBox(height: 24),
@@ -94,11 +94,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(
-                    label: Text('Password'),
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    label: const Text('Password'),
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordObscure
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordObscure = !_isPasswordObscure;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: _isObscure,
+                  obscureText: _isPasswordObscure,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';

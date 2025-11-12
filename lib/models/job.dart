@@ -1,6 +1,6 @@
 import 'package:taskfive/models/company.dart';
 
-enum Category {
+enum JobCategory {
   commerce,
   telecommunications,
   hotelsAndTourism,
@@ -28,7 +28,7 @@ class Job {
   final String title;
   final String location;
   final Company company;
-  final Category category;
+  final JobCategory category;
   final JobType jobtype;
   final ExperienceLevel experience;
   final DateTime posted;
